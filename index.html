@@ -1,96 +1,114 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لعبة الخلية للمجموعات</title>
-<style>
-    body { font-family: Arial, sans-serif; text-align: center; background-color: #e8f5e9; }
-    #game-container { position: relative; width: 80%; margin: 20px auto; border: 2px solid #4caf50; padding: 10px; background: #ffffff; border-radius: 8px; }
-    #cell-image { width: 100%; max-width: 600px; }
-    .cell-part { padding: 8px; background-color: #a5d6a7; margin: 5px; display: inline-block; cursor: pointer; border-radius: 4px; }
-    .correct { color: green; }
-    .winning-message { color: blue; font-size: 1.5em; margin-top: 20px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة أجزاء الخلية</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #e8f5e9; }
+        #game-container { position: relative; width: 80%; margin: 20px auto; border: 2px solid #4caf50; padding: 10px; background: #ffffff; border-radius: 8px; }
+        #cell-image { width: 100%; max-width: 600px; }
+        .cell-part { padding: 8px; background-color: #a5d6a7; margin: 5px; display: inline-block; cursor: pointer; border-radius: 4px; }
+        .correct { color: green; }
+        .winning-message { color: blue; font-size: 1.5em; margin-top: 20px; }
+        .cell-part img { width: 50px; height: 50px; }
+    </style>
 </head>
 <body>
-<h1>لعبة أجزاء الخلية للمجموعات</h1>
-<p>اختر الجزء الصحيح من أجزاء الخلية وضعه في مكانه المناسب.</p>
+    <h1>لعبة أجزاء الخلية للمجموعات</h1>
+    <p>اختر الجزء الصحيح من أجزاء الخلية وضعه في مكانه المناسب.</p>
 
-<div id="game-container">
-    <input type="text" id="group-name" placeholder="أدخل اسم مجموعتك" />
-    <button onclick="startGame()">ابدأ اللعبة</button>
-    <img id="cell-image" src="https://example.com/cell_diagram.jpg" alt="صورة الخلية">
-    <div id="cell-parts">
-        <div class="cell-part" data-part="نواة">نواة</div>
-        <div class="cell-part" data-part="غشاء خلوي">غشاء خلوي</div>
-        <div class="cell-part" data-part="ميتوكندريا">ميتوكندريا</div>
-        <div class="cell-part" data-part="ريبوسومات">ريبوسومات</div>
+    <div id="game-container">
+        <input type="text" id="group-name" placeholder="أدخل اسم مجموعتك" />
+        <button onclick="startGame()">ابدأ اللعبة</button>
+        <img id="cell-image" src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Animal_cell_structure_ar.svg" alt="صورة الخلية">
+        <div id="cell-parts">
+            <div class="cell-part" data-part="نواة">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Nucleus_image.svg/120px-Nucleus_image.svg.png" alt="نواة">
+                نواة
+            </div>
+            <div class="cell-part" data-part="غشاء خلوي">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Cell_membrane_protein.svg/120px-Cell_membrane_protein.svg.png" alt="غشاء خلوي">
+                غشاء خلوي
+            </div>
+            <div class="cell-part" data-part="ميتوكندريا">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Mitochondrion_structure_ar.svg/120px-Mitochondrion_structure_ar.svg.png" alt="ميتوكندريا">
+                ميتوكندريا
+            </div>
+            <div class="cell-part" data-part="ريبوسومات">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Ribosome_2D_structure.svg/120px-Ribosome_2D_structure.svg.png" alt="ريبوسومات">
+                ريبوسومات
+            </div>
+        </div>
+        <div id="feedback"></div>
+        <div id="winning-message" class="winning-message"></div>
     </div>
-    <div id="feedback"></div>
-    <div id="winning-message" class="winning-message"></div>
-</div>
 
-<audio id="background-music" loop>
-    <source src="https://example.com/background_music.mp3" type="audio/mpeg">
-</audio>
-<button onclick="toggleMusic()">تشغيل/إيقاف الموسيقى</button>
+    <audio id="background-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+    <button onclick="toggleMusic()">تشغيل/إيقاف الموسيقى</button>
 
-<script>
-    let groupName = '';
-    const cellParts = {
-        "نواة": "نواة",
-        "غشاء خلوي": "غشاء خلوي",
-        "ميتوكندريا": "ميتوكندريا",
-        "ريبوسومات": "ريبوسومات"
-    };
+    <script>
+        let groupName = '';
+        const cellParts = {
+            "نواة": "نواة",
+            "غشاء خلوي": "غشاء خلوي",
+            "ميتوكندريا": "ميتوكندريا",
+            "ريبوسومات": "ريبوسومات"
+        };
 
-    function startGame() {
-        groupName = document.getElementById("group-name").value;
-        if (!groupName) {
-            alert("يرجى إدخال اسم المجموعة للبدء.");
-            return;
-        }
-        document.getElementById("winning-message").textContent = '';
-        document.getElementById("feedback").textContent = '';
-    }
-
-    document.querySelectorAll(".cell-part").forEach(part => {
-        part.addEventListener("click", function() {
+        function startGame() {
+            groupName = document.getElementById("group-name").value;
             if (!groupName) {
                 alert("يرجى إدخال اسم المجموعة للبدء.");
                 return;
             }
-            const partName = this.getAttribute("data-part");
-            if (cellParts[partName]) {
-                document.getElementById("feedback").textContent = `أحسنت! لقد وضعت ${partName} في المكان الصحيح.`;
-                document.getElementById("feedback").className = "correct";
-                
-                // تحقق من إنهاء المرحلة
-                if (checkWin()) {
-                    document.getElementById("winning-message").textContent = `تهانينا! المجموعة "${groupName}" أكملت المرحلة بنجاح!`;
-                }
-            } else {
-                document.getElementById("feedback").textContent = `حاول مرة أخرى، هذا ليس المكان الصحيح لـ ${partName}.`;
-                document.getElementById("feedback").className = "incorrect";
-            }
-        });
-    });
-
-    function checkWin() {
-        // تحقق من استكمال جميع الأجزاء الصحيحة
-        const completedParts = document.querySelectorAll(".correct").length;
-        return completedParts >= Object.keys(cellParts).length;
-    }
-
-    function toggleMusic() {
-        const music = document.getElementById("background-music");
-        if (music.paused) {
-            music.play();
-        } else {
-            music.pause();
+            document.getElementById("winning-message").textContent = '';
+            document.getElementById("feedback").textContent = '';
         }
-    }
-</script>
+
+        document.querySelectorAll(".cell-part").forEach(part => {
+            part.addEventListener("click", function() {
+                if (!groupName) {
+                    alert("يرجى إدخال اسم المجموعة للبدء.");
+                    return;
+                }
+                const partName = this.getAttribute("data-part");
+                if (cellParts[partName]) {
+                    document.getElementById("feedback").textContent = `أحسنت! لقد وضعت ${partName} في المكان الصحيح.`;
+                    document.getElementById("feedback").className = "correct";
+                    
+                    // تحقق من إنهاء المرحلة
+                    if (checkWin()) {
+                        document.getElementById("winning-message").textContent = `تهانينا! المجموعة "${groupName}" أكملت المرحلة بنجاح!`;
+                        playSuccessSound();
+                    }
+                } else {
+                    document.getElementById("feedback").textContent = `حاول مرة أخرى، هذا ليس المكان الصحيح لـ ${partName}.`;
+                    document.getElementById("feedback").className = "incorrect";
+                }
+            });
+        });
+
+        function checkWin() {
+            const completedParts = document.querySelectorAll(".correct").length;
+            return completedParts >= Object.keys(cellParts).length;
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById("background-music");
+            if (music.paused) {
+                music.play();
+            } else {
+                music.pause();
+            }
+        }
+
+        function playSuccessSound() {
+            const successAudio = new Audio('https://example.com/success-sound.mp3');
+            successAudio.play();
+        }
+    </script>
 </body>
 </html>

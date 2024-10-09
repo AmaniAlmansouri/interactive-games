@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة الخلية</title>
+    <title>لعبة أجزاء الخلية</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f4f7;
             text-align: center;
+            direction: rtl;
         }
         #game-container {
             display: flex;
@@ -20,7 +21,7 @@
             flex-direction: column;
             justify-content: space-around;
             width: 200px;
-            margin-right: 20px;
+            margin-left: 20px;
         }
         #cell-parts img {
             width: 80px;
@@ -54,6 +55,22 @@
             top: 50px;
             left: 220px;
         }
+        #chloroplast {
+            top: 100px;
+            left: 20px;
+        }
+        #cell-wall {
+            top: 0px;
+            left: 0px;
+        }
+        #vacuole {
+            top: 200px;
+            left: 100px;
+        }
+        #plasma-membrane {
+            top: 300px;
+            left: 220px;
+        }
         #feedback {
             margin-top: 20px;
             font-size: 1.2em;
@@ -66,23 +83,27 @@
     <h1>لعبة أجزاء الخلية</h1>
     <p>اسحب الأجزاء إلى المكان الصحيح في الخلية.</p>
 
-    <!-- موسيقى الخلفية -->
-    <audio id="backgroundMusic" autoplay loop>
-        <source src="music.mp3" type="audio/mp3">
-        متصفحك لا يدعم عنصر الصوت.
-    </audio>
+    <audio id="background-music" src="your-music-file.mp3" autoplay loop></audio>
 
     <div id="game-container">
         <div id="cell-parts">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Nucleus_image.svg" id="drag-nucleus" draggable="true" ondragstart="drag(event)" alt="نواة">
             <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Mitochondrion_structure_ar.svg" id="drag-mitochondria" draggable="true" ondragstart="drag(event)" alt="ميتوكندريا">
             <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Cell_membrane_protein.svg" id="drag-membrane" draggable="true" ondragstart="drag(event)" alt="غشاء خلوي">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Chloroplast_diagram.svg" id="drag-chloroplast" draggable="true" ondragstart="drag(event)" alt="بلاستيدات">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/Cell_wall_diagram.svg" id="drag-cell-wall" draggable="true" ondragstart="drag(event)" alt="جدار خلوي">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Vacuole.svg" id="drag-vacuole" draggable="true" ondragstart="drag(event)" alt="فجوة عصارية">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/Plasma_membrane.svg" id="drag-plasma-membrane" draggable="true" ondragstart="drag(event)" alt="غشاء بلازمي">
         </div>
 
         <div id="drop-area" ondrop="drop(event)" ondragover="allowDrop(event)">
             <div id="nucleus" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
             <div id="mitochondria" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
             <div id="membrane" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="chloroplast" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="cell-wall" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="vacuole" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="plasma-membrane" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
     </div>
 
@@ -102,10 +123,13 @@
             const data = event.dataTransfer.getData("text");
             const targetId = event.target.id;
             
-            // التحقق من المطابقة الصحيحة
             if ((data === "drag-nucleus" && targetId === "nucleus") ||
                 (data === "drag-mitochondria" && targetId === "mitochondria") ||
-                (data === "drag-membrane" && targetId === "membrane")) {
+                (data === "drag-membrane" && targetId === "membrane") ||
+                (data === "drag-chloroplast" && targetId === "chloroplast") ||
+                (data === "drag-cell-wall" && targetId === "cell-wall") ||
+                (data === "drag-vacuole" && targetId === "vacuole") ||
+                (data === "drag-plasma-membrane" && targetId === "plasma-membrane")) {
                 
                 const draggedElement = document.getElementById(data);
                 event.target.appendChild(draggedElement);

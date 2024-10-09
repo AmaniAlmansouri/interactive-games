@@ -5,110 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لعبة أجزاء الخلية</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #e8f5e9; }
-        #game-container { position: relative; width: 80%; margin: 20px auto; border: 2px solid #4caf50; padding: 10px; background: #ffffff; border-radius: 8px; }
-        #cell-image { width: 100%; max-width: 600px; }
-        .cell-part { padding: 8px; background-color: #a5d6a7; margin: 5px; display: inline-block; cursor: pointer; border-radius: 4px; }
-        .correct { color: green; }
-        .winning-message { color: blue; font-size: 1.5em; margin-top: 20px; }
-        .cell-part img { width: 50px; height: 50px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f7;
+            text-align: center;
+        }
+        #game-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #cell-parts {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 200px;
+            margin-right: 20px;
+        }
+        #cell-parts img {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+        }
+        #drop-area {
+            width: 400px;
+            height: 400px;
+            border: 2px dashed #4caf50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: white;
+        }
+        .cell-target {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+        }
+        #nucleus {
+            top: 120px;
+            left: 150px;
+        }
+        #mitochondria {
+            top: 250px;
+            left: 50px;
+        }
+        #membrane {
+            top: 50px;
+            left: 220px;
+        }
+        #feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: green;
+        }
     </style>
 </head>
 <body>
-    <h1>لعبة أجزاء الخلية للمجموعات</h1>
-    <p>اختر الجزء الصحيح من أجزاء الخلية وضعه في مكانه المناسب.</p>
+
+    <h1>لعبة أجزاء الخلية</h1>
+    <p>اسحب الأجزاء إلى المكان الصحيح في الخلية.</p>
 
     <div id="game-container">
-        <input type="text" id="group-name" placeholder="أدخل اسم مجموعتك" />
-        <button onclick="startGame()">ابدأ اللعبة</button>
-        <img id="cell-image" src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Animal_cell_structure_ar.svg" alt="صورة الخلية">
         <div id="cell-parts">
-            <div class="cell-part" data-part="نواة">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Nucleus_image.svg/120px-Nucleus_image.svg.png" alt="نواة">
-                نواة
-            </div>
-            <div class="cell-part" data-part="غشاء خلوي">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Cell_membrane_protein.svg/120px-Cell_membrane_protein.svg.png" alt="غشاء خلوي">
-                غشاء خلوي
-            </div>
-            <div class="cell-part" data-part="ميتوكندريا">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Mitochondrion_structure_ar.svg/120px-Mitochondrion_structure_ar.svg.png" alt="ميتوكندريا">
-                ميتوكندريا
-            </div>
-            <div class="cell-part" data-part="ريبوسومات">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Ribosome_2D_structure.svg/120px-Ribosome_2D_structure.svg.png" alt="ريبوسومات">
-                ريبوسومات
-            </div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Nucleus_image.svg" id="drag-nucleus" draggable="true" ondragstart="drag(event)" alt="نواة">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Mitochondrion_structure_ar.svg" id="drag-mitochondria" draggable="true" ondragstart="drag(event)" alt="ميتوكندريا">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Cell_membrane_protein.svg" id="drag-membrane" draggable="true" ondragstart="drag(event)" alt="غشاء خلوي">
         </div>
-        <div id="feedback"></div>
-        <div id="winning-message" class="winning-message"></div>
+
+        <div id="drop-area" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div id="nucleus" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="mitochondria" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="membrane" class="cell-target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        </div>
     </div>
 
-    <audio id="background-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-    <button onclick="toggleMusic()">تشغيل/إيقاف الموسيقى</button>
+    <div id="feedback"></div>
 
     <script>
-        let groupName = '';
-        const cellParts = {
-            "نواة": "نواة",
-            "غشاء خلوي": "غشاء خلوي",
-            "ميتوكندريا": "ميتوكندريا",
-            "ريبوسومات": "ريبوسومات"
-        };
-
-        function startGame() {
-            groupName = document.getElementById("group-name").value;
-            if (!groupName) {
-                alert("يرجى إدخال اسم المجموعة للبدء.");
-                return;
-            }
-            document.getElementById("winning-message").textContent = '';
-            document.getElementById("feedback").textContent = '';
+        function allowDrop(event) {
+            event.preventDefault();
         }
 
-        document.querySelectorAll(".cell-part").forEach(part => {
-            part.addEventListener("click", function() {
-                if (!groupName) {
-                    alert("يرجى إدخال اسم المجموعة للبدء.");
-                    return;
-                }
-                const partName = this.getAttribute("data-part");
-                if (cellParts[partName]) {
-                    document.getElementById("feedback").textContent = `أحسنت! لقد وضعت ${partName} في المكان الصحيح.`;
-                    document.getElementById("feedback").className = "correct";
-                    
-                    // تحقق من إنهاء المرحلة
-                    if (checkWin()) {
-                        document.getElementById("winning-message").textContent = `تهانينا! المجموعة "${groupName}" أكملت المرحلة بنجاح!`;
-                        playSuccessSound();
-                    }
-                } else {
-                    document.getElementById("feedback").textContent = `حاول مرة أخرى، هذا ليس المكان الصحيح لـ ${partName}.`;
-                    document.getElementById("feedback").className = "incorrect";
-                }
-            });
-        });
-
-        function checkWin() {
-            const completedParts = document.querySelectorAll(".correct").length;
-            return completedParts >= Object.keys(cellParts).length;
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
         }
 
-        function toggleMusic() {
-            const music = document.getElementById("background-music");
-            if (music.paused) {
-                music.play();
+        function drop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData("text");
+            const targetId = event.target.id;
+            
+            // التحقق من المطابقة الصحيحة
+            if ((data === "drag-nucleus" && targetId === "nucleus") ||
+                (data === "drag-mitochondria" && targetId === "mitochondria") ||
+                (data === "drag-membrane" && targetId === "membrane")) {
+                
+                const draggedElement = document.getElementById(data);
+                event.target.appendChild(draggedElement);
+                document.getElementById("feedback").textContent = "أحسنت! وضعت " + draggedElement.alt + " في المكان الصحيح.";
+                document.getElementById("feedback").style.color = "green";
             } else {
-                music.pause();
+                document.getElementById("feedback").textContent = "حاول مرة أخرى، هذا ليس المكان الصحيح.";
+                document.getElementById("feedback").style.color = "red";
             }
-        }
-
-        function playSuccessSound() {
-            const successAudio = new Audio('https://example.com/success-sound.mp3');
-            successAudio.play();
         }
     </script>
+
 </body>
 </html>
